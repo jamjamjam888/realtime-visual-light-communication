@@ -85,7 +85,7 @@ for loop in range(loops):
     #リストで取得しなおす
     b1 = [int(i) for i in b1]
     print("b1",b1)
-    """
+    
     pr=list(bin(pr-1000))
     pr=np.array(pr)
     b2=pr[2:]
@@ -97,22 +97,22 @@ for loop in range(loops):
     b3=hu[2:]
     b3 = [int(i) for i in b3]
     print("b3",b3)
-    """
+    
     ##b = np.insert(b1,len(b1),b3) #te & hu
 
     #prefixに¥センサ情報を結合させる------------------------------------
 
     prefix1 = prefix + [0]*(14-len(b1))
-    #prefix2 = prefix + [0]*(14-len(b2))
-    #prefix3 = prefix + [0]*(14-len(b3))
+    prefix2 = prefix + [0]*(14-len(b2))
+    prefix3 = prefix + [0]*(14-len(b3))
 
     b1 = prefix1 + b1
-    #b2 = prefix2 + b2
-    #b3 = prefix3 + b3
+    b2 = prefix2 + b2
+    b3 = prefix3 + b3
 
     print("b1",b1)
-    #print("b2",b2)
-    #print("b3",b3)
+    print("b2",b2)
+    print("b3",b3)
     #query choice-----------------------------------------------------
 
     #msg=subscribe.simple(topic1, hostname=host, retained=False, msg_count=1)
@@ -241,7 +241,78 @@ for loop in range(loops):
         
     #次の2*2の符号化画像アレイに移る
     #print(l)
+    #----------------G------------------------------
+    a=a2
+    b=b2
+    input2 = input(a,b)
+    
+    x2=input2[0].tolist()
+    y2=input2[1].tolist()
+    ls2=input2[2]
+    
+    x2=x2[0]
+    y2=y2[0]
+    
+    print("ls2:",ls2)
 
+    for i in range(0,ls2):
+    #LED上の配列をここで指定
+        index = i//4
+    #iを4で割ったときの商。これに8をかければLEDの点灯箇所を指定できる。ここで、iは入力X,Yの符号長ということに注意。
+    #また最大値は3(4かも?)になる。これは1bitを表すのに2*2の符号化画像を使うので、4*16=64で、8*8のLEDアレイと一致する    
+        g=160
+    #左上
+        if x2[i]==0 and y2[i]==0:
+            l[2*i + index*8][1]=g
+    
+    #右上
+        if x2[i]==0 and y2[i]==1:
+            l[2*i + index*8+1][1]=g
+     
+    #左下
+        if x2[i]==1 and y2[i]==0:
+            l[2*i + index*8+8][1]=g
+
+    #右下
+        if x2[i]==1 and y2[i]==1:
+            l[2*i + index*8+9][1]=g
+    
+    
+    #------------------B---------------------------------------
+    a=a3
+    b=b3
+    input3 = input(a,b)
+
+    x3=input3[0].tolist()
+    y3=input3[1].tolist()
+    ls3=input3[2]
+
+    x3=x3[0]
+    y3=y3[0]
+
+    for i in range(0,ls3):
+    #LED上の配列をここで指定
+        index = i//4
+    #iを4で割ったときの商。これに8をかければLEDの点灯箇所を指定できる。ここで、iは入力X,Yの符号長ということに注意。
+    #また最大値は3(4かも?)になる。これは1bitを表すのに2*2の符号化画像を使うので、4*16=64で、8*8のLEDアレイと一致する    
+        b=140
+    #左上
+        if x3[i]==0 and y3[i]==0:
+            l[2*i + index*8][2]=b
+        
+    #右上
+        if x3[i]==0 and y3[i]==1:
+            l[2*i + index*8+1][2]=b
+     
+    #左下
+        if x3[i]==1 and y3[i]==0:
+            l[2*i + index*8+8][2]=b
+
+    #右下
+        if x3[i]==1 and y3[i]==1:
+            l[2*i + index*8+9][2]=b
+    
+    #-----------------------------------------------
     tolist_l=l.tolist()
     #print(tolist_l)
 
