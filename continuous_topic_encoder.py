@@ -29,7 +29,7 @@ print("Queryを受け取りました")
 
 #------------------------------符号器検出
 e=[0,0,0]
-w=[255,200,180]
+w=[255,255,255]
 z3 = [e]*64
 #z4 = [w]*64
 z4 = [w,w,w,w,w,w,w,w,
@@ -37,8 +37,8 @@ z4 = [w,w,w,w,w,w,w,w,
       w,w,e,w,e,w,w,w,
       w,w,w,w,e,w,w,w,
       w,w,w,w,e,w,w,w,
-      w,w,w,w,e,w,w,w,
       w,w,e,e,e,e,w,w,
+      w,w,w,w,w,w,w,w,
       w,w,w,w,w,w,w,w,
     ]
 
