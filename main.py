@@ -7,12 +7,16 @@ import numpy as np
 from pyueye_example_camera import Camera
 from pyueye import ueye
 import paho.mqtt.publish as publish
+import paho.mqtt.subscribe as subscribe
 from time import sleep
 import time
 from datetime import datetime
 
 from capture_camera_def_test import Decode
 
+
+
+#----------------------------------------------------------
 #capture_camera_def_test内のEncodeクラスを呼び出す
 decode = Decode()
 #-----------------------------------------------------------------
@@ -39,14 +43,13 @@ for loop in range(loops):
 	#同期のためにtopicを送信
 	decode.topic()
 	sleep(0.5)
-
 	#点灯した符号パターンを撮影＋復号処理する
 	#撮影
 	decode.main(2, loop)
-
 	#復号
 	decode.imread_src(areas, loop)
-
+    
+    #--------------------------------------------------------------------------------
 	"""
     #書き込みモードで開く
     #ユーザーのディレクトリに入っている

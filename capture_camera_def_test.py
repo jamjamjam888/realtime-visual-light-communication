@@ -7,20 +7,22 @@ import numpy as np
 from pyueye_example_camera import Camera
 from pyueye import ueye
 import paho.mqtt.publish as publish
+import paho.mqtt.subscribe as subscribe
 from time import sleep
 import time
 from datetime import datetime
+
+topic_pc = "172.16.120.228/lm75b-1/temp"
+topic1 = "172.16.120.130/lm75b-1/temp"
+#topic2=
+#topic3=
+topic4 = "172.16.120.159/lm75b-1/temp"
+host = "172.16.120.148"
 
 #各種関数
 #topic関数
 class Decode():
     def topic(self):
-        topic1 = "172.16.120.130/lm75b-1/temp"
-        #topic2=
-        #topic3=
-        topic4 = "172.16.120.159/lm75b-1/temp"
-        host = "172.16.120.148"
-
         #queryをブロードキャスト 
         publish.single(topic1,"111001",hostname=host)
         #Query:111011
@@ -193,22 +195,70 @@ class Decode():
             ret, img = cv2.threshold(img, 100, 255, cv2.THRESH_BINARY)
             #閾値を100にしている。ノイズが多い場合は変更する必要あり。
             cv2.imwrite('C:\Users\owner\Desktop\watanabe\decoding_\output\\rectangle_detect\hukugou_pxl_1_0_'+str(2+hukugou)+'.png', img)
-            output=[]
+            decode=[]
             #for i in range(1):
             for i in range(4):#4行あるうち、出力する行の数#長いので今は2行まで
                 for j in range(4):#4列
                     mean=np.mean(img[8*i:8*(i+1)-1,8*j : 8*(j+1)-1])
                     if mean<50:
                     	mean = 0
-                        output.append(mean)
+                        decode.append(mean)
                     else:
                     	mean = 1
-                    	output.append(mean)
+                    	decode.append(mean)
+            #output:2bit→符号器番号,2bit→パラメータの指定番号,12bit→センサ情報
+            prefix = decode[0:2:1]#[0,0][0,1][1,0][1,1]の4通り
+            params = decode[2:4:1]#te=[0,1],pr=[1,0],hu=[1,1]
+            sensor = decode[4:16:1]
+            
+            output=[]
+            #符号器番号
+            if prefix == [0,0]:
+                output.append(0)
+            elif prefix == [0,1]:
+                output.append(1)
+            elif prefix == [1,0]:
+                output.append(2)
+            elif prefix == [1,1]:
+                output.append(3)
+            else:
+                output.append("error")
+
+
+            #パラメータ指定番号
+            if params == [0,1]:
+                output.append("te")
+            elif params == [1,0]:
+                output.append("pr")
+            elif params == [1,1]:
+                output.append("hu")
+            else:
+                output.append("error")
+
+            #sensor:2進数→10進数
+            sensor_2 = str()
+            for x in range(len(sensor)):
+                sensor_2 += str(sensor[x])
+            sensor_10 = int(sensor_2,2)
+            output.append(sensor_10)
+
             print(output)
 
             f = open("output.txt", mode='a')
             f.write(str(hukugou)+str(output)+"\n") # 引数の文字列をファイルに書き込む
             f.close()
-            #print(str(hukugou),output
+            print("finish decode loading")
 
-            #符号器の番号とoutputを書き込む
+        """
+        #mqtt通信がうまくいかないので、いったんあきらめる
+        #sensor情報を取得
+
+        print("wait sensor_info")
+        sensor_info = subscribe.simple(topic_pc, hostname=host, retained=False, msg_count=1)
+        #sensor情報をansに格納
+        ans = (sensor_info.payload)
+        print("get sensor_info")
+        print(ans)
+        #print(str(hukugou),output
+        #符号器の番号とoutputを書き込む
+        """
