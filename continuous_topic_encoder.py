@@ -1,6 +1,7 @@
 #coding: utf-8
 
 import paho.mqtt.subscribe as subscribe
+import paho.mqtt.publish as publish
 from time import sleep
 
 import cv2
@@ -12,7 +13,7 @@ sense = SenseHat()
 #----------------------------------------------------------------
 
 topic1 = "172.16.120.130/lm75b-1/temp"
-topic2 = "172.16.120.228/lm75b-1/temp"
+topic_pc = "172.16.120.228/lm75b-1/temp"
 host = "172.16.120.148"
 
 print("復号化を行います")
@@ -66,45 +67,50 @@ for loop in range(loops):
     te = int(t)
     pr = int(p)
     hu = int(h)
+    
+    #sensor_infoにセンサ情報を格納。あとでPCに送信する
+    sensor_info = [te,pr,hu]
     #情報を出力
     print("temperature",te)
-    #print("pressure",pr)
-    #print("humidity",hu)
+    print("pressure",pr)
+    print("humidity",hu)
 
     #先頭に0bのついたバイナリデータをリストで取得
     te=list(bin(te))
-    print("te_binarydata",te)
+    #print("te_binarydata",te)
     te=np.array(te)
-    print("te_np.array",te)
+    #print("te_np.array",te)
     #リストを配列のように使うと遅くなるので一般にnp.arrayにするのがよい
 
     #先頭の0bを除いたバイナリデータ
     b1=te[2:]
-    print("b1",b1)
-
     #リストで取得しなおす
     b1 = [int(i) for i in b1]
-    print("b1",b1)
+    #print("b1",b1)
     
     pr=list(bin(pr-1000))
     pr=np.array(pr)
     b2=pr[2:]
     b2 = [int(i) for i in b2]
-    print("b2",b2)
+    #print("b2",b2)
 
     hu=list(bin(hu))
     hu=np.array(hu)
     b3=hu[2:]
     b3 = [int(i) for i in b3]
-    print("b3",b3)
+    #print("b3",b3)
     
     ##b = np.insert(b1,len(b1),b3) #te & hu
 
     #prefixに¥センサ情報を結合させる------------------------------------
-
-    prefix1 = prefix + [0]*(14-len(b1))
-    prefix2 = prefix + [0]*(14-len(b2))
-    prefix3 = prefix + [0]*(14-len(b3))
+    #ついでに温度、圧力、湿度のprefixもくっつける
+    te_prefix = [0,1]
+    pr_prefix = [1,0]
+    hu_prefix = [1,1]
+    
+    prefix1 = prefix + te_prefix + [0]*(12-len(b1))
+    prefix2 = prefix + pr_prefix + [0]*(12-len(b2))
+    prefix3 = prefix + hu_prefix + [0]*(12-len(b3))
 
     b1 = prefix1 + b1
     b2 = prefix2 + b2
@@ -116,9 +122,6 @@ for loop in range(loops):
     #query choice-----------------------------------------------------
 
     #msg=subscribe.simple(topic1, hostname=host, retained=False, msg_count=1)
-    print("msg.topic", msg.topic)
-    print("Queryを受け取りました")
-
     s1 = list(msg.payload)
     print("s1(Query)",s1)
 
@@ -128,7 +131,6 @@ for loop in range(loops):
 
     #温度のQuery
     a1 = a[0:2]
-    print("a1",a1)
     #圧力のQuery
     a2 = a[2:4]
     #湿度のQuery
@@ -189,8 +191,8 @@ for loop in range(loops):
                 
         x = np.reshape(x,(1,lswt))
         y = np.reshape(y,(1,lswt)) 
-        print("x:",x)
-        print("y:",y)
+        #print("x:",x)
+        #print("y:",y)
         return x,y,lswt
 
     #--------------------------------符号化画像を生成
@@ -209,10 +211,10 @@ for loop in range(loops):
     x1=input1[0].tolist()
     y1=input1[1].tolist()
 
-    print("x1:",x1)
-    print("y1:",y1)
+    #print("x1:",x1)
+    #print("y1:",y1)
     ls1=input1[2]
-    print("ls1:",ls1)
+    #print("ls1:",ls1)
 
     x1=x1[0]
     y1=y1[0]
@@ -253,7 +255,7 @@ for loop in range(loops):
     x2=x2[0]
     y2=y2[0]
     
-    print("ls2:",ls2)
+    #print("ls2:",ls2)
 
     for i in range(0,ls2):
     #LED上の配列をここで指定
@@ -322,6 +324,19 @@ for loop in range(loops):
     time.sleep(5)
     sense.clear()
     print("符号パターン消灯")
+    
+    f = open("/home/pi/Desktop/1/watanabe/RGB_space/output.txt",mode ="a")
+    f.write(str(sensor_info)+"\n")
+    print("書き込み完了")
+    
+    """
+    mqtt通信がうまくいかないのでいったん諦める
+    #sensor_infoをPCに送信ホントはwhile文とかにしたほうがいい
+    sleep(2)
+    print("sensor_infoを送信します")
+    publish.single(topic_pc,sensor_info,hostname=host)
+    print("sensor_infoを送信しました")
+    """
 
     #これを関数にする。入力X,Y,RGBで判定する
 
