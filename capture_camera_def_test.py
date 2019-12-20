@@ -12,11 +12,12 @@ from time import sleep
 import time
 from datetime import datetime
 
-topic_pc = "172.16.120.228/lm75b-1/temp"
-topic1 = "172.16.120.130/lm75b-1/temp"
+topic_pc = "172.16.120.130/lm75b-1/temp"
+topic1 = "172.16.120.228/lm75b-1/temp"
 #topic2=
 #topic3=
 topic4 = "172.16.120.159/lm75b-1/temp"
+topic_camera = "172.16.120.88/lm75b-1/temp"
 host = "172.16.120.148"
 
 #各種関数
@@ -27,7 +28,9 @@ class Decode():
         publish.single(topic1,"111001",hostname=host)
         #Query:111011
         #sleep(1)
-        publish.single(topic4,"111001",hostname=host)
+        #publish.single(topic4,"111001",hostname=host)
+        publish.single(topic_pc,"111001",hostname=host)
+        publish.single(topic_camera,"111001",hostname=host)
 
         from datetime import datetime
         print(datetime.now())
