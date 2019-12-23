@@ -12,16 +12,19 @@ sense = SenseHat()
 
 #----------------------------------------------------------------
 
-topic1 = "172.16.120.130/lm75b-1/temp"
-topic_pc = "172.16.120.228/lm75b-1/temp"
+topic_pc = "172.16.120.130/lm75b-1/temp"
+topic1 = "172.16.120.228/lm75b-1/temp"
 host = "172.16.120.148"
 
-print("復号化を行います")
+print("符号化を行います")
 from datetime import datetime
 now=datetime.now()
 print(now)
 
-
+#file書き込み
+f = open("/home/pi/Desktop/sensor_info.txt",mode ="a")
+f.write(str(now) +"\n")
+print("書き込み完了")
 #query choice-----------------------------------------------------
 
 msg=subscribe.simple(topic1, hostname=host, retained=False, msg_count=1)
@@ -30,7 +33,7 @@ print("Queryを受け取りました")
 
 #------------------------------符号器検出
 e=[0,0,0]
-w=[255,255,255]
+w=[255,225,225]
 z3 = [e]*64
 #z4 = [w]*64
 z4 = [w,w,w,w,w,w,w,w,
@@ -57,9 +60,13 @@ prefix=[0,1]
 print("prefix",prefix)
 
 #sensor------------------------------------------------------------------------
+#count数
+
 #複数回topic+センサ情報取得
 loops = 10
 for loop in range(loops):
+   
+    print("loop",loop)
     t = sense.get_temperature()
     p = sense.get_pressure()
     h = sense.get_humidity()
@@ -262,7 +269,7 @@ for loop in range(loops):
         index = i//4
     #iを4で割ったときの商。これに8をかければLEDの点灯箇所を指定できる。ここで、iは入力X,Yの符号長ということに注意。
     #また最大値は3(4かも?)になる。これは1bitを表すのに2*2の符号化画像を使うので、4*16=64で、8*8のLEDアレイと一致する    
-        g=160
+        g=150
     #左上
         if x2[i]==0 and y2[i]==0:
             l[2*i + index*8][1]=g
@@ -297,7 +304,7 @@ for loop in range(loops):
         index = i//4
     #iを4で割ったときの商。これに8をかければLEDの点灯箇所を指定できる。ここで、iは入力X,Yの符号長ということに注意。
     #また最大値は3(4かも?)になる。これは1bitを表すのに2*2の符号化画像を使うので、4*16=64で、8*8のLEDアレイと一致する    
-        b=140
+        b=120
     #左上
         if x3[i]==0 and y3[i]==0:
             l[2*i + index*8][2]=b
@@ -325,18 +332,16 @@ for loop in range(loops):
     sense.clear()
     print("符号パターン消灯")
     
-    f = open("/home/pi/Desktop/1/watanabe/RGB_space/output.txt",mode ="a")
+    f = open("/home/pi/Desktop/sensor_info.txt",mode ="a")
     f.write(str(sensor_info)+"\n")
     print("書き込み完了")
+    """
+    #mqtt通信がうまくいかないのでいったん諦める
+    #sensor_infoをPCに送信ホントはwhile文とかにしたほうがいい
+    print("sensor_info",sensor_info)
+    print("sensor_infoを送信します")
+    b=11011
+    publish.single(topic_pc,b,hostname=host)
+    print("sensor_infoを送信しました")
     
     """
-    mqtt通信がうまくいかないのでいったん諦める
-    #sensor_infoをPCに送信ホントはwhile文とかにしたほうがいい
-    sleep(2)
-    print("sensor_infoを送信します")
-    publish.single(topic_pc,sensor_info,hostname=host)
-    print("sensor_infoを送信しました")
-    """
-
-    #これを関数にする。入力X,Y,RGBで判定する
-
