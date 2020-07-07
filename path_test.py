@@ -14,7 +14,7 @@ print("sys.path:",sys.path)
 topic_pc = "172.16.120.130/lm75b-1/temp"
 #topic1 = "172.16.120.228/lm75b-1/temp"
 #topic2=
-#topic3=
+#topic3= "172.16.120.145/lm75b-1/temp"
 #topic4 = "172.16.120.159/lm75b-1/temp"
 topic_camera = "172.16.120.88/lm75b-1/temp"
 host = "172.16.120.148"
