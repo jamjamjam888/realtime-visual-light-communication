@@ -38,7 +38,6 @@ Raspberry Pi 3 model B
 画像の書き込み・読み出しは絶対パスで指定しているので注意.
 
 ## memo 
-moment_detect.pyとRGB_reverse_coding.pyが基本的には完成コード.
 ラズパイごとにtopicの調整や輝度値の調整などはする必要がある.
 
 備考)
