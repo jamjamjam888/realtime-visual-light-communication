@@ -1,5 +1,15 @@
 # B4-research
-卒業研究の実験に用いたコード. OpenCVとpython2.
+卒業研究の実験に用いたコード. 
+
+##実装
+```
+OpenCV4.1.1
+python3.7.5
+Raspberry Pi 3
+Raspberry Pi 3 model B(Broker)
+SenseHat(LED+環境センサ)
+USBcamera
+```
 
 ## 環境
 
