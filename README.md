@@ -5,8 +5,8 @@
 
 ### 共通ツール
 ```
-MQTT通信
-DOC(卒業研究内容)
+MQTT通信(IoTゲートウェイ→IoT)
+DOC(卒業研究内容)(IoT→IoTゲートウェイ)
 ```
 
 ### 復号器側(Publisher, IoTゲートウェイ)
