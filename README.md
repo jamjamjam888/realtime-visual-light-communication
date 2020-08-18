@@ -55,15 +55,15 @@ Raspberry Pi 3 model B
 復号マスクは偶数番目にかけているが、複数の符号化開口マスクにして、組み合わせをさらに多重化することを検討してもいい
 
 ## コード
-符号器側コード:continuous_encoder.py
-復号器側コード:capture_camera_def_test.py(ライブラリ)  + main.py(実行ファイル)
+符号器側コード:```continuous_encoder.py```
+復号器側コード:```capture_camera_def_test.py(ライブラリ)  + main.py(実行ファイル)```
 
 ## 注意
 
-IPアドレスを指定しているtopic* の状態に注意.
+IPアドレスを指定している```topic*```の状態に注意.
 
 IPアドレスと実際のラズペリーパイのIPアドレスは, IPアドレスの固定がうまくいっていないとエラーになる.
 
 その場合, IPアドレスを固定した上でtopic(IPアドレス)の状態を変更する.
-topic_pcがtopicを送信するエッジサーバーとなる.
-topic_hostは中継サーバ(Broker)のIPアドレス.
+```topic_pc```がtopicを送信するエッジサーバーとなる.
+```topic_host```は中継サーバ(Broker)のIPアドレス.
