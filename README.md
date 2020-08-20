@@ -56,6 +56,7 @@ Raspberry Pi 3 model B
 
 ## コード
 符号器側コード:```continuous_encoder.py```
+
 復号器側コード:```capture_camera_def_test.py(ライブラリ)  + main.py(実行ファイル)```
 
 ## 注意
